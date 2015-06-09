@@ -37,6 +37,8 @@ public:
 		int i, j, numRows = A.rows();
 	
 		float delta;
+    float psor = 0.3;
+    printf("psor is: %f\n", psor);
 
 		for (int k = 0; k <numIterations; k++)
 		{
@@ -50,37 +52,48 @@ public:
 						int j = A.m_rowNonZeroElements1[i][h];
 						if (j != i)//skip main diagonal
 						{
-							delta += A(i,j) * x[j];
+							delta += psor * A(i,j) * x[j];
 						}
 					}
 				} else
 				{
+          // use two for loop to skip main diagonal
 					for (j = 0; j <i; j++) 
-						delta += A(i,j) * x[j];
+						delta += psor *  A(i,j) * x[j];
 					for (j = i+1; j<numRows; j++) 
-						delta += A(i,j) * x[j];
+						delta += psor * A(i,j) * x[j];
 				}
 
 				float aDiag = A(i,i);
-				x [i] = (b [i] - delta) / aDiag;
+        if(btFabs(aDiag) < 1e-12)
+          aDiag = 1e-5;
+				x[i] = (b[i] - delta) / aDiag;
 				float s = 1.f;
 
+        // >=0 for frictional contact
 				if (limitDependency[i]>=0)
 				{
+          if(x[i] > 1e4)
+            x[i] = 100;
+          // s is normal impulse, if s<0, then force it to 1
 					s = x[limitDependency[i]];
 					if (s<0)
 						s=1;
 				}
 			
+        // by default s = 1.0
+        // so, for bilateral and normal, s = 1.0
+        // while, for friction, s = normal_impulse
 				if (x[i]<lo[i]*s)
 					x[i]=lo[i]*s;
 				if (x[i]>hi[i]*s)
 					x[i]=hi[i]*s;
+
+        //printf("x[%d] is: %f\n", i, x[i]);
 			}
 		}
 		return true;
 	}
-
 };
 
 #endif //BT_SOLVE_PROJECTED_GAUSS_SEIDEL_H
