@@ -330,7 +330,7 @@ public:
 	
 	void applyImpulse(const btVector3& impulse, const btVector3& rel_pos) 
 	{
-		if (m_inverseMass != btScalar(0.))
+		if (btFabs(m_inverseMass - btScalar(0.)) > 1e-8)
 		{
 			applyCentralImpulse(impulse);
 			if (m_angularFactor)

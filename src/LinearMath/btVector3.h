@@ -11,9 +11,6 @@ subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
-
-
-
 #ifndef BT_VECTOR3_H
 #define BT_VECTOR3_H
 
@@ -591,10 +588,10 @@ public:
 #if defined(BT_USE_SSE_IN_API) && defined (BT_USE_SSE)
         return (0xf == _mm_movemask_ps((__m128)_mm_cmpeq_ps(mVec128, other.mVec128)));
 #else 
-		return ((m_floats[3]==other.m_floats[3]) && 
-                (m_floats[2]==other.m_floats[2]) && 
-                (m_floats[1]==other.m_floats[1]) && 
-                (m_floats[0]==other.m_floats[0]));
+		return ((btFabs(m_floats[3] - other.m_floats[3]) < 1e-8) && 
+                (btFabs(m_floats[2]-other.m_floats[2]) < 1e-8) && 
+                (btFabs(m_floats[1]-other.m_floats[1]) < 1e-8) && 
+                (btFabs(m_floats[0]-other.m_floats[0]) < 1e-8));
 #endif
 	}
 
@@ -682,7 +679,9 @@ public:
 
 	SIMD_FORCE_INLINE bool isZero() const 
 	{
-		return m_floats[0] == btScalar(0) && m_floats[1] == btScalar(0) && m_floats[2] == btScalar(0);
+		return ((btFabs(m_floats[0] - btScalar(0)) < 1e-8) &&
+            (btFabs(m_floats[1] - btScalar(0)) < 1e-8) && 
+            (btFabs(m_floats[2] - btScalar(0)) < 1e-8));
 	}
 
 
@@ -1016,11 +1015,11 @@ SIMD_FORCE_INLINE   long    btVector3::maxDot( const btVector3 *array, long arra
         int ptIndex = -1;
         for( i = 0; i < array_count; i++ )
         {
-            btScalar dot = array[i].dot(*this);
+            btScalar dot_1 = array[i].dot(*this);
             
-            if( dot > maxDot1 )
+            if( dot_1 > maxDot1 )
             {
-                maxDot1 = dot;
+                maxDot1 = dot_1;
                 ptIndex = i;
             }
         }
@@ -1049,22 +1048,22 @@ SIMD_FORCE_INLINE   long    btVector3::minDot( const btVector3 *array, long arra
     if( array_count < scalar_cutoff )
 #endif
     {
-        btScalar  minDot = SIMD_INFINITY;
+        btScalar  minDot_1 = SIMD_INFINITY;
         int i = 0;
         int ptIndex = -1;
         
         for( i = 0; i < array_count; i++ )
         {
-            btScalar dot = array[i].dot(*this);
+            btScalar dot_1 = array[i].dot(*this);
             
-            if( dot < minDot )
+            if( dot_1 < minDot_1 )
             {
-                minDot = dot;
+                minDot_1 = dot_1;
                 ptIndex = i;
             }
         }
         
-        dotOut = minDot;
+        dotOut = minDot_1;
         
         return ptIndex;
     }

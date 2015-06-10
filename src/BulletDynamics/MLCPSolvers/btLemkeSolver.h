@@ -215,7 +215,7 @@ public:
 		{
 			x[i] = solution[i];
 			volatile btScalar check = x[i];
-			if (x[i] != check)
+			if (btFabs(x[i] - check) > 1e-8)
 			{
 				//printf("Lemke result is #NAN\n");
 				x.setZero();
@@ -295,7 +295,7 @@ public:
 		{
 			x[i] = solution[i+dimension];
 			volatile btScalar check = x[i];
-			if (x[i] != check)
+			if (btFabs(x[i] - check) > 1e-8)
 			{
 				x.setZero();
 				return false;

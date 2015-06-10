@@ -299,9 +299,9 @@ public:
 
 	///enableFeedback will allow to read the applied linear and angular impulse
 	///use getAppliedImpulse, getAppliedLinearImpulse and getAppliedAngularImpulse to read feedback information
-	void	enableFeedback(bool needsFeedback)
+	void	enableFeedback(bool _needsFeedback)
 	{
-		m_needsFeedback = needsFeedback;
+		m_needsFeedback = _needsFeedback;
 	}
 
 	///getAppliedImpulse is an estimated total applied impulse. 

@@ -498,7 +498,7 @@ public:
 		roll = btScalar(btAtan2(m_el[2].y(), m_el[2].z()));
 
 		// on pitch = +/-HalfPI
-		if (btFabs(pitch)==SIMD_HALF_PI)
+		if (btFabs(btFabs(pitch) - SIMD_HALF_PI) < 1e-8)
 		{
 			if (yaw>0)
 				yaw-=SIMD_PI;
@@ -1332,9 +1332,15 @@ SIMD_FORCE_INLINE bool operator==(const btMatrix3x3& m1, const btMatrix3x3& m2)
     return (0x7 == _mm_movemask_ps((__m128)c0));
 #else 
 	return 
-    (   m1[0][0] == m2[0][0] && m1[1][0] == m2[1][0] && m1[2][0] == m2[2][0] &&
-		m1[0][1] == m2[0][1] && m1[1][1] == m2[1][1] && m1[2][1] == m2[2][1] &&
-		m1[0][2] == m2[0][2] && m1[1][2] == m2[1][2] && m1[2][2] == m2[2][2] );
+    (  (btFabs(m1[0][0] - m2[0][0]) < 1e-8) && 
+       (btFabs(m1[1][0] - m2[1][0]) < 1e-8) && 
+       (btFabs(m1[2][0] - m2[2][0]) < 1e-8) &&
+		   (btFabs(m1[0][1] - m2[0][1]) < 1e-8) && 
+       (btFabs(m1[1][1] - m2[1][1]) < 1e-8) && 
+       (btFabs(m1[2][1] - m2[2][1]) < 1e-8) &&
+		   (btFabs(m1[0][2] - m2[0][2]) < 1e-8) && 
+       (btFabs(m1[1][2] - m2[1][2]) < 1e-8) && 
+       (btFabs(m1[2][2] - m2[2][2]) < 1e-8) );
 #endif
 }
 

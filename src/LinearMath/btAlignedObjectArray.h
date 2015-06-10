@@ -67,9 +67,9 @@ private:
 #endif//BT_ALLOW_ARRAY_COPY_OPERATOR
 
 protected:
-		SIMD_FORCE_INLINE	int	allocSize(int size)
+		SIMD_FORCE_INLINE	int	allocSize(int _size)
 		{
-			return (size ? size*2 : 1);
+			return (_size ? _size*2 : 1);
 		}
 		SIMD_FORCE_INLINE	void	copy(int start,int end, T* dest) const
 		{
@@ -99,10 +99,10 @@ protected:
 			}
 		}
 
-		SIMD_FORCE_INLINE	void* allocate(int size)
+		SIMD_FORCE_INLINE	void* allocate(int _size)
 		{
-			if (size)
-				return m_allocator.allocate(size);
+			if (_size)
+				return m_allocator.allocate(_size);
 			return 0;
 		}
 

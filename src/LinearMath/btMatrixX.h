@@ -49,9 +49,9 @@ struct btVectorX
 		m_storage.resize(numRows);
 	}
 	
-	void resize(int rows)
+	void resize(int _rows)
 	{
-		m_storage.resize(rows);
+		m_storage.resize(_rows);
 	}
 	int cols() const
 	{
@@ -180,23 +180,23 @@ struct btMatrixX
 		m_setElemOperations(0)
 	{
 	}
-	btMatrixX(int rows,int cols)
-		:m_rows(rows),
-		m_cols(cols),
+	btMatrixX(int _rows,int _cols)
+		:m_rows(_rows),
+		m_cols(_cols),
 		m_operations(0),
 		m_resizeOperations(0),
 		m_setElemOperations(0)
 	{
-		resize(rows,cols);
+		resize(_rows,_cols);
 	}
-	void resize(int rows, int cols)
+	void resize(int _rows, int _cols)
 	{
 		m_resizeOperations++;
-		m_rows = rows;
-		m_cols = cols;
+		m_rows = _rows;
+		m_cols = _cols;
 		{
 			BT_PROFILE("m_storage.resize");
-			m_storage.resize(rows*cols);
+			m_storage.resize(_rows*_cols);
 		}
 	}
 	int cols() const
@@ -214,33 +214,33 @@ struct btMatrixX
 	}
 	*/
 
-	void addElem(int row,int col, T val)
+	void addElem(int _row,int _col, T val)
 	{
-		if (val)
+		if (btFabs(val) > 1e-8)
 		{
-			if (m_storage[col+row*m_cols]==0.f)
+			if (btFabs(m_storage[_col+_row*m_cols]) < 1e-8)
 			{
-				setElem(row,col,val);
+				setElem(_row,_col,val);
 			} else
 			{
-				m_storage[row*m_cols+col] += val;
+				m_storage[_row*m_cols+_col] += val;
 			}
 		}
 	}
 	
 	
-	void setElem(int row,int col, T val)
+	void setElem(int _row,int _col, T val)
 	{
 		m_setElemOperations++;
-		m_storage[row*m_cols+col] = val;
+		m_storage[_row*m_cols+_col] = val;
 	}
 	
-	void mulElem(int row,int col, T val)
+	void mulElem(int _row,int _col, T val)
 	{
 		m_setElemOperations++;
 		//mul doesn't change sparsity info
 
-		m_storage[row*m_cols+col] *= val;
+		m_storage[_row*m_cols+_col] *= val;
 	}
 	
 	
@@ -315,7 +315,7 @@ struct btMatrixX
 			m_rowNonZeroElements1[i].resize(0);
 			for (int j=0;j<cols();j++)
 			{
-				if ((*this)(i,j)!=0.f)
+				if (btFabs((*this)(i,j)) > 1e-8)
 				{
 					m_rowNonZeroElements1[i].push_back(j);
 				}
@@ -363,7 +363,7 @@ struct btMatrixX
 							for (int v=0;v<rows();v++)
 							{
 								T w = (*this)(i,v);
-								if (other(v,j)!=0.f)
+								if ( btFabs(other(v,j)) > 1e-8)
 								{
 									dotProd+=w*other(v,j);	
 								}
@@ -371,7 +371,7 @@ struct btMatrixX
 							}
 						}
 					}
-					if (dotProd)
+					if (btFabs(dotProd) > 1e-8)
 						res.setElem(i,j,dotProd);
 				}
 			}

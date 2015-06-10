@@ -37,8 +37,8 @@ public:
 		int i, j, numRows = A.rows();
 	
 		float delta;
-    float psor = 0.3;
-    printf("psor is: %f\n", psor);
+    float psor = 0.5;
+    //printf("psor is: %f\n", psor);
 
 		for (int k = 0; k <numIterations; k++)
 		{
@@ -70,11 +70,11 @@ public:
 				x[i] = (b[i] - delta) / aDiag;
 				float s = 1.f;
 
+        if(x[i] > 1e6)
+          x[i] = 100.000;
         // >=0 for frictional contact
 				if (limitDependency[i]>=0)
 				{
-          if(x[i] > 1e4)
-            x[i] = 100;
           // s is normal impulse, if s<0, then force it to 1
 					s = x[limitDependency[i]];
 					if (s<0)
@@ -89,11 +89,12 @@ public:
 				if (x[i]>hi[i]*s)
 					x[i]=hi[i]*s;
 
-        //printf("x[%d] is: %f\n", i, x[i]);
+        //printf("x[%d] is : 5f\n", i, x[i]);
 			}
 		}
 		return true;
 	}
+
 };
 
 #endif //BT_SOLVE_PROJECTED_GAUSS_SEIDEL_H
